@@ -1,60 +1,111 @@
-import './style.css'
-import heroImg from './assets/hero.png'
-import typescriptLogo from './assets/typescript.svg'
-import viteLogo from './assets/vite.svg'
-import { setupCounter } from './counter.ts'
+import "./style.css";
+import {
+    DEFAULT_VERSIONED,
+    LANG,
+    MIN_FONT,
+    MAX_FONT,
+    makeEntry,
+    plainValues,
+    newerEntry,
+    loadFromStorage,
+    saveToStorage,
+    TAB_ID,
+} from "./settings";
+import type { Settings, VersionedSettings } from "./settings";
+import { t } from "./i18n";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${typescriptLogo}" class="framework" alt="TypeScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.ts</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+function el<T extends HTMLElement>(id: string): T {
+    const found = document.getElementById(id);
+    if (!found) throw new Error(`Missing #${id}`);
+    return found as T;
+}
 
-<div class="ticks"></div>
+const title = el("title");
+const labelTheme = el("label-theme");
+const labelLanguage = el("label-language");
+const labelFont = el("label-font");
+const preview = el("preview");
+const fontValue = el("font-value");
+const themeToggle = el<HTMLInputElement>("theme-toggle");
+const languageSelect = el<HTMLSelectElement>("language-select");
+const fontSlider = el<HTMLInputElement>("font-slider");
+const syncStatus = el("sync-status");
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src="${viteLogo}" alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://www.typescriptlang.org" target="_blank">
-          <img class="button-icon" src="${typescriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+fontSlider.min = String(MIN_FONT);
+fontSlider.max = String(MAX_FONT);
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+for (const lang of LANG) {
+    const opt = document.createElement("option");
+    opt.value = lang;
+    opt.textContent = lang;
+    languageSelect.append(opt);
+}
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+let state: VersionedSettings = loadFromStorage() ?? { ...DEFAULT_VERSIONED };
+
+function render(): void {
+    const s: Settings = plainValues(state);
+
+    document.documentElement.dataset.theme = s.theme;
+    document.documentElement.style.setProperty("--font-size", `${s.fontSize}px`);
+
+    title.textContent = t(s.language, "title");
+    labelTheme.textContent = t(s.language, "darkMode");
+    labelLanguage.textContent = t(s.language, "language");
+    labelFont.textContent = t(s.language, "fontSize");
+    preview.textContent = t(s.language, "preview");
+
+    themeToggle.checked = s.theme === "dark";
+    languageSelect.value = s.language;
+    fontSlider.value = String(s.fontSize);
+    fontValue.textContent = `${s.fontSize}px`;
+}
+
+const channel = new BroadcastChannel("tab-sync");
+
+channel.onmessage = (e) => {
+    if (!e.data || e.data.from === TAB_ID) return;
+
+    state = {
+        theme: newerEntry(state.theme, e.data.settings.theme),
+        language: newerEntry(state.language, e.data.settings.language),
+        fontSize: newerEntry(state.fontSize, e.data.settings.fontSize),
+    };
+
+    saveToStorage(state);
+    render();
+
+    const ms = Math.max(0, Date.now() - e.data.sentAt);
+    syncStatus.textContent = `synced in ${ms} ms`;
+};
+
+function updateSetting<K extends keyof Settings>(key: K, value: Settings[K]): void {
+    state = { ...state, [key]: makeEntry(value) };
+    saveToStorage(state);
+    render();
+    channel.postMessage({ sentAt: Date.now(), from: TAB_ID, settings: state });
+}
+
+let sliderTimeout: number | undefined;
+
+fontSlider.addEventListener("input", () => {
+    const size = Number(fontSlider.value);
+    state = { ...state, fontSize: makeEntry(size) };
+    render();
+
+    clearTimeout(sliderTimeout);
+    sliderTimeout = window.setTimeout(() => {
+        saveToStorage(state);
+        channel.postMessage({ sentAt: Date.now(), from: TAB_ID, settings: state });
+    }, 100);
+});
+
+themeToggle.addEventListener("change", () => {
+    updateSetting("theme", themeToggle.checked ? "dark" : "light");
+});
+
+languageSelect.addEventListener("change", () => {
+    updateSetting("language", languageSelect.value as Settings["language"]);
+});
+
+render();

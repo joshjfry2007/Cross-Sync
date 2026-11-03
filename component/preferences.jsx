@@ -111,7 +111,7 @@ const Preferences = () => {
       <div className='dark-save-bar border border-blue-950 rounded-4xl p-2 mt-6 flex justify-end'>
         <button
           onClick={handleSave}
-          className="text-black border border-blue-950 px-6 py-2 rounded-4xl bg-green-500 hover:bg-green-400 transition-colors font-semibold"
+          className="dark-save-btn text-black border border-blue-950 px-6 py-2 rounded-4xl bg-green-500 hover:bg-green-400 transition-colors font-semibold"
         >
           {saved ? t('saved') : t('saveChanges')}
         </button>

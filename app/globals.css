@@ -27,101 +27,115 @@ html.dark {
 [data-theme="dark"] body,
 html.dark body,
 body.dark {
-  background-color: #07090e !important;
-  color: #f1f5f9 !important;
+  background-color: #0B1020 !important;
+  color: #E6EAF5 !important;
 }
 
 [data-theme="dark"] main,
 html.dark main {
-  background-color: #07090e !important;
-  color: #f1f5f9 !important;
+  background-color: #0B1020 !important;
+  color: #E6EAF5 !important;
 }
 
 [data-theme="dark"] .dark-card,
 html.dark .dark-card {
-  background-color: #0e131f !important;
-  border-color: #1b2333 !important;
-  color: #f1f5f9 !important;
+  background-color: #141C33 !important;
+  border-color: #232C47 !important;
+  color: #E6EAF5 !important;
 }
 
 [data-theme="dark"] .dark-sidebar,
 html.dark .dark-sidebar {
-  background-color: #0e131f !important;
-  border-right-color: #1b2333 !important;
+  background-color: #0F1629 !important;
+  border-right-color: #232C47 !important;
 }
 
 [data-theme="dark"] .dark-header,
 html.dark .dark-header {
-  background-color: #0e131f !important;
-  border-bottom-color: #1b2333 !important;
+  background-color: #0F1629 !important;
+  border-bottom-color: #232C47 !important;
 }
 
 [data-theme="dark"] .dark-nav-link,
 html.dark .dark-nav-link {
   background-color: transparent !important;
-  border-color: #1b2333 !important;
-  color: #cbd5e1 !important;
+  border-color: #232C47 !important;
+  color: #8A94B2 !important;
 }
 [data-theme="dark"] .dark-nav-link:hover,
 html.dark .dark-nav-link:hover {
-  background-color: #182236 !important;
-  color: #ffffff !important;
+  background-color: #141C33 !important;
+  border-color: #232C47 !important;
+  color: #E6EAF5 !important;
 }
 [data-theme="dark"] .dark-nav-link-active,
 html.dark .dark-nav-link-active {
-  background-color: #182236 !important;
-  border-color: #3b82f6 !important;
-  color: #60a5fa !important;
+  background-color: #19233D !important;
+  border-color: #232C47 !important;
+  color: #E6EAF5 !important;
 }
 
 [data-theme="dark"] .dark-input,
 html.dark .dark-input {
-  background-color: #151c2d !important;
-  color: #f1f5f9 !important;
-  border-color: #242f45 !important;
+  background-color: #0F1629 !important;
+  color: #E6EAF5 !important;
+  border-color: #232C47 !important;
 }
 [data-theme="dark"] .dark-input::placeholder,
 html.dark .dark-input::placeholder {
-  color: #64748b !important;
+  color: #8A94B2 !important;
 }
 
 [data-theme="dark"] .dark-user-row,
 html.dark .dark-user-row {
-  border-bottom-color: #1b2333 !important;
-  color: #cbd5e1 !important;
+  border-bottom-color: #232C47 !important;
+  color: #E6EAF5 !important;
 }
 [data-theme="dark"] .dark-user-row:hover,
 html.dark .dark-user-row:hover {
-  background-color: #182236 !important;
+  background-color: #19233D !important;
 }
 
 [data-theme="dark"] .dark-pref-row,
 html.dark .dark-pref-row {
-  background-color: #07090e !important;
-  border: 1px solid #1b2333 !important;
-  color: #f1f5f9 !important;
+  background-color: #0B1020 !important;
+  border: 1px solid #232C47 !important;
+  color: #E6EAF5 !important;
 }
 
 [data-theme="dark"] .dark-select,
 html.dark .dark-select {
-  background-color: #151c2d !important;
-  border-color: #242f45 !important;
-  color: #f1f5f9 !important;
+  background-color: #141C33 !important;
+  border-color: #232C47 !important;
+  color: #E6EAF5 !important;
 }
 
 [data-theme="dark"] .dark-save-bar,
 html.dark .dark-save-bar {
-  border-color: #1b2333 !important;
+  border-color: #232C47 !important;
+}
+
+[data-theme="dark"] .dark-save-btn,
+html.dark .dark-save-btn {
+  background-color: #22C55E !important;
+  border-color: #22C55E !important;
+  color: #0B1020 !important;
+  font-weight: 600 !important;
+}
+[data-theme="dark"] .dark-save-btn:hover,
+html.dark .dark-save-btn:hover {
+  background-color: #16a34a !important;
+  border-color: #16a34a !important;
 }
 
 [data-theme="dark"] .dark-title,
-html.dark .dark-title     { color: #60a5fa !important; }
+html.dark .dark-title     { color: #6C8CFF !important; }
 [data-theme="dark"] .dark-muted,
-html.dark .dark-muted     { color: #64748b !important; }
+html.dark .dark-muted     { color: #8A94B2 !important; }
 [data-theme="dark"] .dark-email,
-html.dark .dark-email     { color: #34d399 !important; }
+html.dark .dark-email     { color: #22C55E !important; }
 [data-theme="dark"] .dark-app-title,
-html.dark .dark-app-title { color: #f8fafc !important; }
+html.dark .dark-app-title { color: #E6EAF5 !important; }
 
 [data-theme="dark"] .dark-icon,
 html.dark .dark-icon {

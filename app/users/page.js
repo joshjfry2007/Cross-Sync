@@ -36,7 +36,7 @@ const UsersPage = () => {
         <Header />
 
         <section className="flex-1 px-8 py-6 overflow-y-auto">
-          <div className="mb-4 pb-2 border-b border-gray-200 dark:border-slate-800">
+          <div className="mb-4 pb-2 border-b border-gray-200 dark:border-[#232C47]">
             <h1 className="text-2xl font-bold dark-title">{t('users')}</h1>
           </div>
 
@@ -47,14 +47,14 @@ const UsersPage = () => {
           )}
 
           {!loading && (
-            <div className="divide-y divide-gray-200 dark:divide-slate-800">
+            <div className="divide-y divide-gray-200 dark:divide-[#232C47]">
               {users.map((user) => (
                 <div
                   key={user.id}
-                  className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors px-2"
+                  className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors hover:bg-gray-50/50 dark:hover:bg-[#141C33]/50 px-2 rounded-lg"
                 >
                   <div className="flex items-center gap-4 min-w-[240px]">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-950 flex items-center justify-center text-blue-900 dark:text-blue-300 font-bold text-sm shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-[#141C33] border border-transparent dark:border-[#232C47] flex items-center justify-center text-blue-900 dark:text-[#6C8CFF] font-bold text-sm shrink-0">
                       {initials(user.name)}
                     </div>
                     <div>
@@ -91,7 +91,7 @@ const UsersPage = () => {
                       <span className="text-xs uppercase font-medium text-gray-400 dark:text-gray-500 mr-2">
                         {t('website')}:
                       </span>
-                      <span className="text-blue-600 dark:text-blue-400">{user.website}</span>
+                      <span className="text-blue-600 dark:text-[#6C8CFF]">{user.website}</span>
                     </div>
                   </div>
                 </div>

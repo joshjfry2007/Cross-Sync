@@ -42,7 +42,7 @@ const peopleCard = () => {
                             key={user.id}
                             onClick={() => setSelectedUser(user)}
                             className={`dark-user-row text-left p-3 border-b border-gray-300 hover:bg-gray-200 transition-all duration-200 ease-in-out rounded-t-lg
-                            ${selectedUser?.id === user.id ? "text-blue-400 font-bold" : ""}
+                            ${selectedUser?.id === user.id ? "text-blue-600 dark:text-[#6C8CFF] font-bold" : ""}
                             `}
                         >
                             <p>{user.name}</p>
@@ -56,7 +56,7 @@ const peopleCard = () => {
                 <div className="flex flex-col flex-1 gap-4 my-10 mr-10 overflow-y-auto">
                     <div className="dark-card bg-gray-50 p-6 rounded-4xl border border-blue-950 shadow-2xl">
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-12 h-12 rounded-full bg-blue-200 flex items-center justify-center text-blue-900 font-bold text-lg">
+                            <div className="w-12 h-12 rounded-full bg-blue-500  border border-transparent dark:border-[#232C47] flex items-center justify-center text-gray-900  font-bold text-lg">
                                 {initials(selectedUser.name)}
                             </div>
                             <div>

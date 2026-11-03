@@ -133,6 +133,16 @@ export function SettingsProvider({ children }) {
       .then((res) => res.json())
       .then((data) => {
         const s = data?.settings || data;
+        try {
+          const stored = localStorage.getItem('tab-sync:settings');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            const apiTime = data?.updatedAt ? new Date(data.updatedAt).getTime() : 0;
+            const localTime = parsed.ts || 0;
+            if (localTime > apiTime) return;
+          }
+        } catch {}
+
         if (s?.theme) setTheme(extractValue(s.theme, 'light'));
         if (s?.language) setLanguage(extractValue(s.language, 'English'));
         if (s?.fontSize) setFontSize(Number(extractValue(s.fontSize, 14)));

@@ -1,14 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React from 'react';
 import { usePathname } from 'next/navigation';
 import { useSettings } from '@/context/SettingsContext';
 
 const Header = () => {
   const pathname = usePathname();
-  const { t } = useSettings();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { t, toggleSidebar } = useSettings();
 
   const isSettingsPage = pathname === '/' || pathname.includes('settings');
   const isUsersPage = pathname.includes('users') || pathname.includes('user');
@@ -20,52 +18,21 @@ const Header = () => {
     : pathname.replace('/', '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
   return (
-    <>
-      <div className="md:hidden px-4 pt-3 pb-2 flex items-center justify-between border-b border-gray-200 dark:border-[#232C47]">
-        <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-[#E6EAF5]">
-          Cross-Sync
-        </h1>
+    <div className='dark-header border-b border-gray-200 bg-white px-4 sm:px-6 py-4 flex justify-between items-center shadow-2xl gap-3'>
+      <div className="flex items-center gap-3 min-w-0">
         <button
-          type="button"
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="text-sm font-medium text-gray-600 dark:text-[#8A94B2] hover:text-gray-900 dark:hover:text-[#E6EAF5] px-2 py-1 rounded"
+          onClick={toggleSidebar}
+          className="md:hidden p-1.5 -ml-1 text-gray-700 dark:text-[#E6EAF5] hover:bg-gray-100 dark:hover:bg-[#141C33] rounded-lg transition-colors cursor-pointer"
+          aria-label="Toggle menu"
         >
-          Menu
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
         </button>
+        <p className='dark-title text-xl sm:text-2xl font-bold text-blue-800 truncate'>{pageTitle}</p>
       </div>
-
-      {menuOpen && (
-        <div className="md:hidden border-b border-gray-200 dark:border-[#232C47] bg-white dark:bg-[#0F1629] px-4 py-3 flex flex-col gap-2">
-          <Link
-            href="/"
-            onClick={() => setMenuOpen(false)}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-              isSettingsPage
-                ? 'bg-blue-50 text-blue-600 dark:bg-[#19233D] dark:text-[#6C8CFF]'
-                : 'text-gray-700 dark:text-[#8A94B2] hover:bg-gray-100 dark:hover:bg-[#141C33]'
-            }`}
-          >
-            {t('settings')}
-          </Link>
-          <Link
-            href="/users"
-            onClick={() => setMenuOpen(false)}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-              isUsersPage
-                ? 'bg-blue-50 text-blue-600 dark:bg-[#19233D] dark:text-[#6C8CFF]'
-                : 'text-gray-700 dark:text-[#8A94B2] hover:bg-gray-100 dark:hover:bg-[#141C33]'
-            }`}
-          >
-            {t('users')}
-          </Link>
-        </div>
-      )}
-
-      <div className="hidden md:flex dark-header border-b border-gray-200 bg-white px-6 py-4 justify-between items-center shadow-2xl">
-        <p className="dark-title text-2xl font-bold text-blue-800">{pageTitle}</p>
-        <p className="dark-muted text-sm font-semibold text-green-700 ml-auto">{t('syncedAcrossTabs')}</p>
-      </div>
-    </>
+      <p className='dark-muted text-xs sm:text-sm font-semibold text-green-700 shrink-0 text-right'>{t('syncedAcrossTabs')}</p>
+    </div>
   );
 };
 

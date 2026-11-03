@@ -101,6 +101,8 @@ export function SettingsProvider({ children }) {
   const [theme, setTheme] = useState('light');
   const [language, setLanguage] = useState('English');
   const [fontSize, setFontSize] = useState(14);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   useEffect(() => {
     try {
@@ -227,6 +229,9 @@ export function SettingsProvider({ children }) {
         setLanguage,
         fontSize: Number(extractValue(fontSize, 14)),
         setFontSize,
+        sidebarOpen,
+        setSidebarOpen,
+        toggleSidebar,
         broadcastSettings,
         t,
       }}

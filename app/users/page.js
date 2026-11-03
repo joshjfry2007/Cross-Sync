@@ -42,65 +42,78 @@ const UsersPage = () => {
       .toUpperCase();
 
   return (
-    <main className="flex flex-col md:flex-row min-h-screen md:h-screen">
+    <main className="flex flex-col md:flex-row min-h-screen md:h-screen overflow-x-hidden">
       <Sidebar />
 
-      <div className="flex flex-col flex-1 overflow-x-hidden md:overflow-hidden">
+      <div className="flex flex-col flex-1 min-w-0 md:overflow-hidden">
         <Header />
 
-        <section className="flex-1 p-3 md:p-6 overflow-y-auto">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">{t('users')}</h1>
+        <section className="flex-1 px-4 sm:px-8 py-4 sm:py-6 overflow-y-auto">
+          <div className="mb-4 pb-2 border-b border-gray-200 dark:border-[#232C47]">
+            <h1 className="text-2xl font-bold dark-title">{t('users')}</h1>
+          </div>
 
-            {loading && (
-              <div className="p-8 text-center text-gray-500 dark:text-[#8A94B2]">
-                Loading users...
-              </div>
-            )}
+          {loading && (
+            <div className="py-8 text-center dark-muted text-gray-500">
+              Loading users...
+            </div>
+          )}
 
-            {error && (
-              <div className="p-8 text-center flex flex-col items-center gap-3">
-                <p className="text-red-500 text-sm">{error}</p>
-                <button
-                  onClick={fetchUsers}
-                  className="text-sm bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          {error && (
+            <div className="py-8 text-center flex flex-col items-center gap-3">
+              <p className="text-red-500 text-sm">{error}</p>
+              <button
+                onClick={fetchUsers}
+                className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {!loading && !error && (
+            <div className="divide-y divide-gray-200 dark:divide-[#232C47]">
+              {users.map((user) => (
+                <div
+                  key={user.id}
+                  className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors hover:bg-gray-50/50 dark:hover:bg-[#141C33]/50 px-2 rounded-lg"
                 >
-                  Retry
-                </button>
-              </div>
-            )}
+                  <div className="flex items-center gap-4 min-w-60">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-[#141C33] border border-transparent dark:border-[#232C47] flex items-center justify-center text-blue-900 dark:text-[#6C8CFF] font-bold text-sm shrink-0">
+                      {initials(user.name)}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-base">{user.name}</p>
+                      <p className="dark-email text-sm text-green-900">{user.email}</p>
+                    </div>
+                  </div>
 
-            {!loading && !error && (
-              <div className="divide-y divide-gray-200 dark:divide-[#232C47]">
-                {users.map((user) => (
-                  <div
-                    key={user.id}
-                    className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 hover:bg-gray-50/50 dark:hover:bg-[#141C33]/40 px-2 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-500 border border-transparent dark:border-[#232C47] flex items-center justify-center text-gray-900 font-bold text-sm shrink-0">
-                        {initials(user.name)}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900 dark:text-[#E6EAF5]">
-                          {user.name}
-                        </p>
-                        <p className="text-xs text-green-700 dark:text-[#22C55E]">
-                          {user.email}
-                        </p>
-                      </div>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-8 text-sm dark-muted text-gray-600">
+                    <div>
+                      <span className="text-xs uppercase font-medium text-gray-400 dark:text-gray-500 mr-2">
+                        {t('company')}:
+                      </span>
+                      <span>{user.company?.name}</span>
                     </div>
 
-                    <div className="text-xs text-gray-500 dark:text-[#8A94B2] flex flex-wrap gap-x-4 gap-y-1 sm:text-right">
-                      <span>{user.company?.name}</span>
+                    <div>
+                      <span className="text-xs uppercase font-medium text-gray-400 dark:text-gray-500 mr-2">
+                        {t('city')}:
+                      </span>
                       <span>{user.address?.city}</span>
+                    </div>
+
+                    <div>
+                      <span className="text-xs uppercase font-medium text-gray-400 dark:text-gray-500 mr-2">
+                        {t('phone')}:
+                      </span>
                       <span>{user.phone}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </main>

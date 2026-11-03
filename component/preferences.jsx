@@ -22,6 +22,7 @@ const Preferences = () => {
   const [language, setLanguage] = useState(globalLanguage);
   const [fontSize, setFontSize] = useState(globalFontSize);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => { setTheme(globalTheme); }, [globalTheme]);
   useEffect(() => { setLanguage(globalLanguage); }, [globalLanguage]);
@@ -43,18 +44,52 @@ const Preferences = () => {
   };
 
   const handleSave = async () => {
+    if (saving) return;
+    setSaving(true);
     try {
-      await fetch('/api/settings', {
+      const res = await fetch('/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ theme, language, fontSize }),
       });
+      if (res.ok) {
+        broadcastSettings({ theme, language, fontSize });
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      }
     } catch (err) {
       console.error('Failed to save to /api/settings:', err);
+    } finally {
+      setSaving(false);
     }
-    broadcastSettings({ theme, language, fontSize });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleReset = async () => {
+    if (saving) return;
+    setSaving(true);
+    const defaults = { theme: 'light', language: 'English', fontSize: 14 };
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(defaults),
+      });
+      if (res.ok) {
+        setTheme(defaults.theme);
+        setLanguage(defaults.language);
+        setFontSize(defaults.fontSize);
+        setGlobalTheme(defaults.theme);
+        setGlobalLanguage(defaults.language);
+        setGlobalFontSize(defaults.fontSize);
+        broadcastSettings(defaults);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      }
+    } catch (err) {
+      console.error('Failed to reset settings:', err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -67,7 +102,7 @@ const Preferences = () => {
           <select
             value={theme}
             onChange={(e) => handleThemeChange(e.target.value)}
-            className='dark-select ml-4 p-2 rounded-4xl border border-gray-300 h-10 w-50 text-center text-lg bg-white'
+            className='dark-select ml-4 p-2 rounded-4xl border border-gray-300 h-10 w-50 text-center text-lg bg-white outline-none'
           >
             {THEMES.map((th) => (
               <option key={th} value={th}>{th}</option>
@@ -80,7 +115,7 @@ const Preferences = () => {
           <select
             value={language}
             onChange={(e) => handleLanguageChange(e.target.value)}
-            className='dark-select ml-4 p-2 rounded-4xl border border-gray-300 h-10 w-50 text-center text-lg bg-white'
+            className='dark-select ml-4 p-2 rounded-4xl border border-gray-300 h-10 w-50 text-center text-lg bg-white outline-none'
           >
             {LANGUAGES.map((lang) => (
               <option key={lang} value={lang}>{lang}</option>
@@ -108,12 +143,21 @@ const Preferences = () => {
         </p>
       </div>
 
-      <div className='dark-save-bar border border-blue-950 rounded-4xl p-2 mt-6 flex justify-end'>
+      <div className='dark-save-bar border border-blue-950 rounded-4xl p-2 mt-6 flex flex-wrap gap-3 justify-end items-center'>
+        <button
+          onClick={handleReset}
+          disabled={saving}
+          className="text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-[#232C47] px-4 py-2 rounded-4xl hover:bg-gray-100 dark:hover:bg-[#141C33] transition-colors font-medium text-sm disabled:opacity-50"
+        >
+          {t('resetToDefaults')}
+        </button>
+
         <button
           onClick={handleSave}
-          className="dark-save-btn text-black border border-blue-950 px-6 py-2 rounded-4xl bg-green-500 hover:bg-green-400 transition-colors font-semibold"
+          disabled={saving}
+          className="dark-save-btn text-black border border-blue-950 px-6 py-2 rounded-4xl bg-green-500 hover:bg-green-400 transition-colors font-semibold disabled:opacity-50"
         >
-          {saved ? t('saved') : t('saveChanges')}
+          {saving ? t('saving') : saved ? t('saved') : t('saveChanges')}
         </button>
       </div>
     </div>

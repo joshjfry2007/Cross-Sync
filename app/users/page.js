@@ -9,15 +9,28 @@ const UsersPage = () => {
   const { t } = useSettings();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const fetchUsers = () => {
+    setLoading(true);
+    setError(null);
     fetch('https://jsonplaceholder.typicode.com/users')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to load users');
+        return res.json();
+      })
       .then((data) => {
         setUsers(data);
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        setError(err.message || 'Failed to load users');
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchUsers();
   }, []);
 
   const initials = (name) =>
@@ -46,7 +59,19 @@ const UsersPage = () => {
             </div>
           )}
 
-          {!loading && (
+          {error && (
+            <div className="py-8 text-center flex flex-col items-center gap-3">
+              <p className="text-red-500 text-sm">{error}</p>
+              <button
+                onClick={fetchUsers}
+                className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {!loading && !error && (
             <div className="divide-y divide-gray-200 dark:divide-[#232C47]">
               {users.map((user) => (
                 <div

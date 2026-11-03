@@ -19,6 +19,8 @@ export const translations = {
     preview: 'Preview: Make yourself at home.',
     saveChanges: 'Save changes',
     saved: 'Saved ✓',
+    saving: 'Saving...',
+    resetToDefaults: 'Reset to defaults',
     syncedAcrossTabs: 'Synced across tabs',
   },
   Hindi: {
@@ -37,6 +39,8 @@ export const translations = {
     preview: 'पूर्वावलोकन: यहाँ घर जैसा महसूस करें।',
     saveChanges: 'बदलाव सहेजें',
     saved: 'सहेजा गया ✓',
+    saving: 'सहेज रहा है...',
+    resetToDefaults: 'डिफ़ॉल्ट पर रीसेट करें',
     syncedAcrossTabs: 'टैब में सिंक किया गया',
   },
   German: {
@@ -55,6 +59,8 @@ export const translations = {
     preview: 'Vorschau: Fühlen Sie sich wie zu Hause.',
     saveChanges: 'Änderungen speichern',
     saved: 'Gespeichert ✓',
+    saving: 'Speichern...',
+    resetToDefaults: 'Auf Standard zurücksetzen',
     syncedAcrossTabs: 'Tab-übergreifend synchronisiert',
   },
   French: {
@@ -73,6 +79,8 @@ export const translations = {
     preview: 'Aperçu : Faites comme chez vous.',
     saveChanges: 'Enregistrer les modifications',
     saved: 'Enregistré ✓',
+    saving: 'Enregistrement...',
+    resetToDefaults: 'Rétablir les valeurs par défaut',
     syncedAcrossTabs: 'Synchronisé entre les onglets',
   },
 };

@@ -13,7 +13,7 @@ const Sidebar = () => {
   const isUsers = pathname.includes('users') || pathname.includes('user');
 
   return (
-    <aside className='h-screen'>
+    <aside className='hidden md:block h-screen'>
       <nav className='dark-sidebar h-full w-62 flex flex-col bg-white shadow-2xl border-r border-gray-200 gap-2'>
         <p className='dark-app-title text-2xl font-bold p-4 text-center'>Cross-Sync</p>
         

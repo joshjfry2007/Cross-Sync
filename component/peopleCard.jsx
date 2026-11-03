@@ -49,8 +49,8 @@ const peopleCard = () => {
     const initials = (name) => name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
 
     return (
-        <div className="flex flex-col lg:flex-row gap-6 h-full overflow-hidden">
-            <div className="dark-card bg-gray-50 p-4 rounded-4xl w-full lg:w-70 border border-blue-950 shadow-2xl flex flex-col m-2 lg:m-10 shrink-0">
+        <div className="flex flex-col lg:flex-row gap-4 md:gap-6 w-full max-w-5xl mx-auto">
+            <div className="hidden lg:flex dark-card bg-gray-50 p-4 rounded-4xl w-70 border border-blue-950 shadow-2xl flex-col shrink-0">
                 <p className="font-bold">{t('users')}</p>
                 <input
                     className='dark-input bg-gray-300 w-full rounded-4xl p-2 mt-4 mr-4 mb-4 text-center outline-none'
@@ -79,7 +79,7 @@ const peopleCard = () => {
                 )}
 
                 {!loading && !error && (
-                    <div className="flex flex-col gap-2 overflow-y-auto">
+                    <div className="flex flex-col gap-2 overflow-y-auto max-h-[calc(100vh-220px)]">
                         {onlyUsers.map((user) => (
                             <button
                                 key={user.id}
@@ -99,42 +99,73 @@ const peopleCard = () => {
                 )}
             </div>
 
-            {selectedUser && (
-                <div className="flex flex-col flex-1 gap-4 m-2 lg:my-10 lg:mr-10 overflow-y-auto">
-                    <div className="dark-card bg-gray-50 p-6 rounded-4xl border border-blue-950 shadow-2xl">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="w-12 h-12 rounded-full bg-blue-500 border border-transparent dark:border-[#232C47] flex items-center justify-center text-gray-900 font-bold text-lg shrink-0">
+            <div className="flex flex-col flex-1 gap-4 w-full">
+                <div className="md:hidden">
+                    <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-[#E6EAF5]">
+                        {t('settings')}
+                    </h2>
+                    <p className="text-xs text-gray-500 dark:text-[#8A94B2] mt-0.5 mb-3">
+                        Manage your preferences.
+                    </p>
+
+                    <div className="relative mb-3">
+                        <input
+                            type="text"
+                            placeholder={t('searchUsers')}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full bg-white dark:bg-[#141C33] border border-gray-200 dark:border-[#232C47] rounded-xl px-4 py-2.5 text-sm text-gray-900 dark:text-[#E6EAF5] placeholder-gray-400 dark:placeholder-[#8A94B2] outline-none shadow-sm focus:border-blue-500"
+                        />
+                        {search && (
+                            <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#141C33] border border-gray-200 dark:border-[#232C47] rounded-xl shadow-lg z-20 max-h-48 overflow-y-auto">
+                                {onlyUsers.map((u) => (
+                                    <button
+                                        key={u.id}
+                                        type="button"
+                                        onClick={() => {
+                                            setSelectedUser(u);
+                                            setSearch("");
+                                        }}
+                                        className="w-full text-left px-3 py-2 text-xs border-b border-gray-100 dark:border-[#232C47] hover:bg-gray-50 dark:hover:bg-[#19233D]"
+                                    >
+                                        <p className="font-semibold text-gray-900 dark:text-[#E6EAF5]">{u.name}</p>
+                                        <p className="text-gray-500 dark:text-[#8A94B2]">{u.email}</p>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {selectedUser && (
+                    <div className="dark-card bg-white dark:bg-[#141C33] p-4 md:p-6 rounded-2xl md:rounded-4xl border border-gray-200 dark:border-[#232C47] shadow-sm md:shadow-2xl">
+                        <div className="flex items-center gap-3.5 mb-4">
+                            <div className="w-11 h-11 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-600 dark:text-white font-semibold text-sm flex items-center justify-center shrink-0">
                                 {initials(selectedUser.name)}
                             </div>
-                            <div>
-                                <p className="text-xl font-bold">{selectedUser.name}</p>
-                                <p className="dark-email text-sm text-green-900">{selectedUser.email}</p>
+                            <div className="min-w-0 flex-1">
+                                <p className="text-base md:text-xl font-bold truncate text-gray-900 dark:text-[#E6EAF5]">
+                                    {selectedUser.name}
+                                </p>
+                                <p className="text-xs md:text-sm text-gray-500 dark:text-[#8A94B2] truncate">
+                                    {selectedUser.email}
+                                </p>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-12">
-                            <div>
-                                <p className="dark-muted text-xs text-gray-500 uppercase font-semibold mb-1">{t('company')}</p>
-                                <p className="font-medium truncate">{selectedUser.company?.name}</p>
-                            </div>
-                            <div>
-                                <p className="dark-muted text-xs text-gray-500 uppercase font-semibold mb-1">{t('city')}</p>
-                                <p className="font-medium truncate">{selectedUser.address?.city}</p>
-                            </div>
-                            <div>
-                                <p className="dark-muted text-xs text-gray-500 uppercase font-semibold mb-1">{t('phone')}</p>
-                                <p className="font-medium truncate">{selectedUser.phone}</p>
-                            </div>
-                            <div>
-                                <p className="dark-muted text-xs text-gray-500 uppercase font-semibold mb-1">{t('website')}</p>
-                                <p className="font-medium truncate">{selectedUser.website}</p>
-                            </div>
+                        <div className="pt-3 border-t border-gray-100 dark:border-[#232C47] flex justify-between items-center text-xs text-gray-600 dark:text-[#8A94B2]">
+                            <span className="font-medium truncate pr-2">
+                                {selectedUser.company?.name || selectedUser.company}
+                            </span>
+                            <span className="font-medium truncate text-right">
+                                {selectedUser.address?.city || selectedUser.city}
+                            </span>
                         </div>
                     </div>
+                )}
 
-                    <Preferences />
-                </div>
-            )}
+                <Preferences />
+            </div>
         </div>
     );
 };

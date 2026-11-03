@@ -93,71 +93,89 @@ const Preferences = () => {
   };
 
   return (
-    <div>
-      <div className='dark-card bg-gray-50 p-6 rounded-4xl border border-blue-950 shadow-2xl flex flex-col gap-4'>
-        <h2 className='text-xl font-bold mb-4'>{t('preferences')}</h2>
+    <div className="flex flex-col gap-4">
+      <div className='dark-card bg-white dark:bg-[#141C33] p-4 md:p-6 rounded-2xl md:rounded-4xl border border-gray-200 dark:border-[#232C47] shadow-sm md:shadow-2xl flex flex-col gap-4'>
+        <h2 className='text-lg md:text-xl font-bold'>{t('preferences')}</h2>
 
-        <div className='dark-pref-row px-10 bg-gray-100 rounded-4xl min-h-15 flex items-center text-xl'>
-          <label>{t('theme')}</label>
-          <select
-            value={theme}
-            onChange={(e) => handleThemeChange(e.target.value)}
-            className='dark-select ml-4 p-2 rounded-4xl border border-gray-300 h-10 w-50 text-center text-lg bg-white outline-none'
-          >
-            {THEMES.map((th) => (
-              <option key={th} value={th}>{th}</option>
-            ))}
-          </select>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs md:text-sm font-semibold text-gray-800 dark:text-[#E6EAF5]">
+            {t('theme')}
+          </label>
+          <div className="relative">
+            <select
+              value={theme}
+              onChange={(e) => handleThemeChange(e.target.value)}
+              className='dark-select w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-[#232C47] bg-white dark:bg-[#0F1629] text-sm text-gray-900 dark:text-[#E6EAF5] appearance-none outline-none cursor-pointer capitalize'
+            >
+              {THEMES.map((th) => (
+                <option key={th} value={th}>{th}</option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+              v
+            </span>
+          </div>
         </div>
 
-        <div className='dark-pref-row px-10 bg-gray-100 rounded-4xl min-h-15 flex items-center text-xl'>
-          <label>{t('language')}</label>
-          <select
-            value={language}
-            onChange={(e) => handleLanguageChange(e.target.value)}
-            className='dark-select ml-4 p-2 rounded-4xl border border-gray-300 h-10 w-50 text-center text-lg bg-white outline-none'
-          >
-            {LANGUAGES.map((lang) => (
-              <option key={lang} value={lang}>{lang}</option>
-            ))}
-          </select>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs md:text-sm font-semibold text-gray-800 dark:text-[#E6EAF5]">
+            {t('language')}
+          </label>
+          <div className="relative">
+            <select
+              value={language}
+              onChange={(e) => handleLanguageChange(e.target.value)}
+              className='dark-select w-full px-3.5 py-2.5 rounded-xl border border-gray-200 dark:border-[#232C47] bg-white dark:bg-[#0F1629] text-sm text-gray-900 dark:text-[#E6EAF5] appearance-none outline-none cursor-pointer'
+            >
+              {LANGUAGES.map((lang) => (
+                <option key={lang} value={lang}>{lang}</option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+              v
+            </span>
+          </div>
         </div>
 
-        <div className="mb-4 px-6">
-          <div className="flex justify-between mb-2">
-            <label className="font-semibold text-sm">{t('fontSize')}</label>
-            <span className="dark-muted text-sm text-gray-500 transition-all duration-200 ease-in-out">
+        <div className="pt-1">
+          <div className="flex justify-between items-center mb-2">
+            <label className="font-semibold text-xs md:text-sm text-gray-800 dark:text-[#E6EAF5]">
+              {t('fontSize')}
+            </label>
+            <span className="dark-muted text-xs text-gray-500">
               {fontSize} px
             </span>
           </div>
           <input
-            type="range" min={12} max={18}
+            type="range"
+            min={12}
+            max={24}
             value={fontSize}
             onChange={(e) => handleFontSizeChange(Number(e.target.value))}
-            className="w-full accent-blue-600 transition-all duration-200 ease-in-out cursor-pointer"
+            className="w-full accent-blue-600 cursor-pointer"
           />
         </div>
 
-        <p className="dark-muted text-sm text-gray-500 italic mb-6">
+        <p className="dark-muted text-xs text-gray-500 mt-1">
           {t('preview')}
         </p>
       </div>
 
-      <div className='dark-save-bar border border-blue-950 rounded-4xl p-2 mt-6 flex flex-wrap gap-3 justify-end items-center'>
-        <button
-          onClick={handleReset}
-          disabled={saving}
-          className="text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-[#232C47] px-4 py-2 rounded-4xl bg-[#18213c] hover:bg-[#2b3963] hover transition-colors font-semibold text-sm disabled:opacity-50"
-        >
-          {t('resetToDefaults')}
-        </button>
-
+      <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
         <button
           onClick={handleSave}
           disabled={saving}
-          className="dark-save-btn text-black border border-blue-950 px-6 py-2 rounded-4xl bg-green-500 hover:bg-green-400 transition-colors font-semibold disabled:opacity-50"
+          className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors shadow-sm disabled:opacity-50 order-1"
         >
           {saving ? t('saving') : saved ? t('saved') : t('saveChanges')}
+        </button>
+
+        <button
+          onClick={handleReset}
+          disabled={saving}
+          className="w-full sm:w-auto py-2.5 px-4 rounded-xl text-gray-600 dark:text-[#8A94B2] border border-gray-200 dark:border-[#232C47] hover:bg-gray-100 dark:hover:bg-[#141C33] text-xs font-medium transition-colors order-2"
+        >
+          {t('resetToDefaults')}
         </button>
       </div>
     </div>

@@ -78,7 +78,7 @@ const UsersPage = () => {
                   key={user.id}
                   className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-colors hover:bg-gray-50/50 dark:hover:bg-[#141C33]/50 px-2 rounded-lg"
                 >
-                  <div className="flex items-center gap-4 min-w-[240px]">
+                  <div className="flex items-center gap-4 min-w-60">
                     <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-[#141C33] border border-transparent dark:border-[#232C47] flex items-center justify-center text-blue-900 dark:text-[#6C8CFF] font-bold text-sm shrink-0">
                       {initials(user.name)}
                     </div>

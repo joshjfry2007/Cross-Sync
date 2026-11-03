@@ -147,7 +147,7 @@ const Preferences = () => {
         <button
           onClick={handleReset}
           disabled={saving}
-          className="text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-[#232C47] px-4 py-2 rounded-4xl hover:bg-gray-100 dark:hover:bg-[#141C33] transition-colors font-medium text-sm disabled:opacity-50"
+          className="text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-[#232C47] px-4 py-2 rounded-4xl bg-[#18213c] hover:bg-[#2b3963] hover transition-colors font-semibold text-sm disabled:opacity-50"
         >
           {t('resetToDefaults')}
         </button>

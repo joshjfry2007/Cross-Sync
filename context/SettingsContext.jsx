@@ -77,6 +77,12 @@ export const translations = {
   },
 };
 
+function extractValue(val, fallback) {
+  if (val === null || val === undefined) return fallback;
+  if (typeof val === 'object' && 'value' in val) return val.value ?? fallback;
+  return val;
+}
+
 const TAB_ID = typeof crypto !== 'undefined' && crypto.randomUUID
   ? crypto.randomUUID()
   : Math.random().toString(36).slice(2);
@@ -88,15 +94,14 @@ export function SettingsProvider({ children }) {
   const [language, setLanguage] = useState('English');
   const [fontSize, setFontSize] = useState(14);
 
-  // Load initial settings from server API or localStorage
   useEffect(() => {
     try {
       const stored = localStorage.getItem('tab-sync:settings');
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (parsed.theme) setTheme(parsed.theme);
-        if (parsed.language) setLanguage(parsed.language);
-        if (parsed.fontSize) setFontSize(Number(parsed.fontSize));
+        if (parsed.theme) setTheme(extractValue(parsed.theme, 'light'));
+        if (parsed.language) setLanguage(extractValue(parsed.language, 'English'));
+        if (parsed.fontSize) setFontSize(Number(extractValue(parsed.fontSize, 14)));
       }
     } catch {}
 
@@ -104,20 +109,34 @@ export function SettingsProvider({ children }) {
       .then((res) => res.json())
       .then((data) => {
         const s = data?.settings || data;
-        if (s?.theme) setTheme(s.theme);
-        if (s?.language) setLanguage(s.language);
-        if (s?.fontSize) setFontSize(Number(s.fontSize));
+        if (s?.theme) setTheme(extractValue(s.theme, 'light'));
+        if (s?.language) setLanguage(extractValue(s.language, 'English'));
+        if (s?.fontSize) setFontSize(Number(extractValue(s.fontSize, 14)));
       })
       .catch(() => {});
   }, []);
 
-  // Update only the CSS variable --font-size so layout containers (which use rem) stay fixed
   useEffect(() => {
-    document.documentElement.style.fontSize = ''; // Never override rem root base
-    document.documentElement.style.setProperty('--font-size', `${fontSize}px`);
+    const activeTheme = extractValue(theme, 'light');
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', activeTheme);
+      if (activeTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('dark');
+      }
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.fontSize = '';
+      document.documentElement.style.setProperty('--font-size', `${fontSize}px`);
+    }
   }, [fontSize]);
 
-  // Real-time synchronization across all browser tabs
   useEffect(() => {
     const ch = new BroadcastChannel('tab-sync');
 
@@ -126,9 +145,9 @@ export function SettingsProvider({ children }) {
       const s = e.data.settings;
       if (!s) return;
 
-      const newTheme = s.theme?.value ?? s.theme;
-      const newLang = s.language?.value ?? s.language;
-      const newFont = s.fontSize?.value ?? s.fontSize;
+      const newTheme = extractValue(s.theme, null);
+      const newLang = extractValue(s.language, null);
+      const newFont = extractValue(s.fontSize, null);
 
       if (newTheme) setTheme(newTheme);
       if (newLang) setLanguage(newLang);
@@ -140,9 +159,9 @@ export function SettingsProvider({ children }) {
         try {
           const parsed = JSON.parse(e.newValue);
           if (parsed.from === TAB_ID) return;
-          if (parsed.theme) setTheme(parsed.theme);
-          if (parsed.language) setLanguage(parsed.language);
-          if (parsed.fontSize) setFontSize(Number(parsed.fontSize));
+          if (parsed.theme) setTheme(extractValue(parsed.theme, 'light'));
+          if (parsed.language) setLanguage(extractValue(parsed.language, 'English'));
+          if (parsed.fontSize) setFontSize(Number(extractValue(parsed.fontSize, 14)));
         } catch {}
       }
     };
@@ -155,29 +174,32 @@ export function SettingsProvider({ children }) {
     };
   }, []);
 
-  // Broadcast function called on save
   const broadcastSettings = (newSettings) => {
+    const cleanTheme = extractValue(newSettings.theme, 'light');
+    const cleanLang = extractValue(newSettings.language, 'English');
+    const cleanFont = Number(extractValue(newSettings.fontSize, 14));
+
     const payload = {
       from: TAB_ID,
       sentAt: Date.now(),
       settings: {
-        theme: { value: newSettings.theme, ts: Date.now(), tabId: TAB_ID },
-        language: { value: newSettings.language, ts: Date.now(), tabId: TAB_ID },
-        fontSize: { value: newSettings.fontSize, ts: Date.now(), tabId: TAB_ID },
+        theme: { value: cleanTheme, ts: Date.now(), tabId: TAB_ID },
+        language: { value: cleanLang, ts: Date.now(), tabId: TAB_ID },
+        fontSize: { value: cleanFont, ts: Date.now(), tabId: TAB_ID },
       },
     };
 
-    // 1. Send via BroadcastChannel (do NOT close immediately, allow IPC queue to flush)
     try {
       const ch = new BroadcastChannel('tab-sync');
       ch.postMessage(payload);
       setTimeout(() => ch.close(), 1000);
     } catch {}
 
-    // 2. Persist to localStorage (triggers storage event in other tabs)
     try {
       localStorage.setItem('tab-sync:settings', JSON.stringify({
-        ...newSettings,
+        theme: cleanTheme,
+        language: cleanLang,
+        fontSize: cleanFont,
         from: TAB_ID,
         ts: Date.now(),
       }));
@@ -191,11 +213,11 @@ export function SettingsProvider({ children }) {
   return (
     <SettingsContext.Provider
       value={{
-        theme,
+        theme: extractValue(theme, 'light'),
         setTheme,
-        language,
+        language: extractValue(language, 'English'),
         setLanguage,
-        fontSize,
+        fontSize: Number(extractValue(fontSize, 14)),
         setFontSize,
         broadcastSettings,
         t,

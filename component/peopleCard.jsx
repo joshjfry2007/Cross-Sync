@@ -26,11 +26,10 @@ const peopleCard = () => {
 
     return (
         <div className="flex gap-6 h-full overflow-hidden">
-
-            <div className="bg-gray-50 p-4 rounded-4xl w-70 border border-blue-950 shadow-2xl flex flex-col m-10">
+            <div className="dark-card bg-gray-50 p-4 rounded-4xl w-70 border border-blue-950 shadow-2xl flex flex-col m-10">
                 <p className="font-bold">{t('users')}</p>
                 <input
-                    className='bg-gray-300 w-full rounded-4xl p-2 mt-4 mr-4 mb-4 text-center'
+                    className='dark-input bg-gray-300 w-full rounded-4xl p-2 mt-4 mr-4 mb-4 text-center'
                     type="text"
                     placeholder={t('searchUsers')}
                     value={search}
@@ -42,14 +41,12 @@ const peopleCard = () => {
                         <button
                             key={user.id}
                             onClick={() => setSelectedUser(user)}
-                            className={`text-left p-3 border-b border-gray-300 hover:bg-gray-200 transition-all duration-200 ease-in-out rounded-t-lg
-                            ${selectedUser?.id === user.id
-                                ? "text-blue-900 font-bold"
-                                : ""}
+                            className={`dark-user-row text-left p-3 border-b border-gray-300 hover:bg-gray-200 transition-all duration-200 ease-in-out rounded-t-lg
+                            ${selectedUser?.id === user.id ? "text-blue-400 font-bold" : ""}
                             `}
                         >
                             <p>{user.name}</p>
-                            <p className='text-sm text-green-900'>{user.email}</p>
+                            <p className='dark-email text-sm text-green-900'>{user.email}</p>
                         </button>
                     ))}
                 </div>
@@ -57,44 +54,40 @@ const peopleCard = () => {
 
             {selectedUser && (
                 <div className="flex flex-col flex-1 gap-4 my-10 mr-10 overflow-y-auto">
-
-                    <div className="bg-gray-50 p-6 rounded-4xl border border-blue-950 shadow-2xl">
-
+                    <div className="dark-card bg-gray-50 p-6 rounded-4xl border border-blue-950 shadow-2xl">
                         <div className="flex items-center gap-4 mb-6">
                             <div className="w-12 h-12 rounded-full bg-blue-200 flex items-center justify-center text-blue-900 font-bold text-lg">
                                 {initials(selectedUser.name)}
                             </div>
                             <div>
                                 <p className="text-xl font-bold">{selectedUser.name}</p>
-                                <p className="text-sm text-green-900">{selectedUser.email}</p>
+                                <p className="dark-email text-sm text-green-900">{selectedUser.email}</p>
                             </div>
                         </div>
 
                         <div className="flex gap-12">
                             <div>
-                                <p className="text-xs text-gray-500 uppercase font-semibold mb-1">{t('company')}</p>
+                                <p className="dark-muted text-xs text-gray-500 uppercase font-semibold mb-1">{t('company')}</p>
                                 <p className="font-medium">{selectedUser.company?.name}</p>
                             </div>
                             <div>
-                                <p className="text-xs text-gray-500 uppercase font-semibold mb-1">{t('city')}</p>
+                                <p className="dark-muted text-xs text-gray-500 uppercase font-semibold mb-1">{t('city')}</p>
                                 <p className="font-medium">{selectedUser.address?.city}</p>
                             </div>
                             <div>
-                                <p className="text-xs text-gray-500 uppercase font-semibold mb-1">{t('phone')}</p>
+                                <p className="dark-muted text-xs text-gray-500 uppercase font-semibold mb-1">{t('phone')}</p>
                                 <p className="font-medium">{selectedUser.phone}</p>
                             </div>
                             <div>
-                                <p className="text-xs text-gray-500 uppercase font-semibold mb-1">{t('website')}</p>
+                                <p className="dark-muted text-xs text-gray-500 uppercase font-semibold mb-1">{t('website')}</p>
                                 <p className="font-medium">{selectedUser.website}</p>
                             </div>
                         </div>
                     </div>
 
                     <Preferences />
-
                 </div>
             )}
-
         </div>
     );
 };

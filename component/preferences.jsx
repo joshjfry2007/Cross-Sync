@@ -31,16 +31,19 @@ const Preferences = () => {
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
     setGlobalLanguage(newLang);
+    broadcastSettings({ theme, language: newLang, fontSize });
   };
 
   const handleFontSizeChange = (newSize) => {
     setFontSize(newSize);
     setGlobalFontSize(newSize);
+    broadcastSettings({ theme, language, fontSize: newSize });
   };
 
   const handleThemeChange = (newTheme) => {
     setTheme(newTheme);
     setGlobalTheme(newTheme);
+    broadcastSettings({ theme: newTheme, language, fontSize });
   };
 
   const handleSave = async () => {

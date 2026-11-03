@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 export const translations = {
   English: {
@@ -91,10 +91,6 @@ function extractValue(val, fallback) {
   return val;
 }
 
-const TAB_ID = typeof crypto !== 'undefined' && crypto.randomUUID
-  ? crypto.randomUUID()
-  : Math.random().toString(36).slice(2);
-
 const SettingsContext = createContext(null);
 
 export function SettingsProvider({ children }) {
@@ -103,6 +99,24 @@ export function SettingsProvider({ children }) {
   const [fontSize, setFontSize] = useState(14);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
+
+  const [tabId] = useState(() => {
+    if (typeof window === 'undefined') return 'server';
+    try {
+      let id = sessionStorage.getItem('tab_sync_id');
+      if (!id) {
+        id = typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : Math.random().toString(36).slice(2);
+        sessionStorage.setItem('tab_sync_id', id);
+      }
+      return id;
+    } catch {
+      return Math.random().toString(36).slice(2);
+    }
+  });
+
+  const channelRef = useRef(null);
 
   useEffect(() => {
     try {
@@ -148,27 +162,31 @@ export function SettingsProvider({ children }) {
   }, [fontSize]);
 
   useEffect(() => {
-    const ch = new BroadcastChannel('tab-sync');
+    let ch = null;
+    try {
+      ch = new BroadcastChannel('tab-sync');
+      channelRef.current = ch;
 
-    ch.onmessage = (e) => {
-      if (!e.data || e.data.from === TAB_ID) return;
-      const s = e.data.settings;
-      if (!s) return;
+      ch.onmessage = (e) => {
+        if (!e.data || e.data.from === tabId) return;
+        const s = e.data.settings;
+        if (!s) return;
 
-      const newTheme = extractValue(s.theme, null);
-      const newLang = extractValue(s.language, null);
-      const newFont = extractValue(s.fontSize, null);
+        const newTheme = extractValue(s.theme, null);
+        const newLang = extractValue(s.language, null);
+        const newFont = extractValue(s.fontSize, null);
 
-      if (newTheme) setTheme(newTheme);
-      if (newLang) setLanguage(newLang);
-      if (newFont) setFontSize(Number(newFont));
-    };
+        if (newTheme) setTheme(newTheme);
+        if (newLang) setLanguage(newLang);
+        if (newFont) setFontSize(Number(newFont));
+      };
+    } catch {}
 
     const onStorageChange = (e) => {
       if (e.key === 'tab-sync:settings' && e.newValue) {
         try {
           const parsed = JSON.parse(e.newValue);
-          if (parsed.from === TAB_ID) return;
+          if (parsed.from === tabId) return;
           if (parsed.theme) setTheme(extractValue(parsed.theme, 'light'));
           if (parsed.language) setLanguage(extractValue(parsed.language, 'English'));
           if (parsed.fontSize) setFontSize(Number(extractValue(parsed.fontSize, 14)));
@@ -179,10 +197,13 @@ export function SettingsProvider({ children }) {
     window.addEventListener('storage', onStorageChange);
 
     return () => {
-      ch.close();
+      if (ch) {
+        ch.close();
+        channelRef.current = null;
+      }
       window.removeEventListener('storage', onStorageChange);
     };
-  }, []);
+  }, [tabId]);
 
   const broadcastSettings = (newSettings) => {
     const cleanTheme = extractValue(newSettings.theme, 'light');
@@ -190,19 +211,23 @@ export function SettingsProvider({ children }) {
     const cleanFont = Number(extractValue(newSettings.fontSize, 14));
 
     const payload = {
-      from: TAB_ID,
+      from: tabId,
       sentAt: Date.now(),
       settings: {
-        theme: { value: cleanTheme, ts: Date.now(), tabId: TAB_ID },
-        language: { value: cleanLang, ts: Date.now(), tabId: TAB_ID },
-        fontSize: { value: cleanFont, ts: Date.now(), tabId: TAB_ID },
+        theme: { value: cleanTheme, ts: Date.now(), tabId },
+        language: { value: cleanLang, ts: Date.now(), tabId },
+        fontSize: { value: cleanFont, ts: Date.now(), tabId },
       },
     };
 
     try {
-      const ch = new BroadcastChannel('tab-sync');
-      ch.postMessage(payload);
-      setTimeout(() => ch.close(), 1000);
+      if (channelRef.current) {
+        channelRef.current.postMessage(payload);
+      } else {
+        const ch = new BroadcastChannel('tab-sync');
+        ch.postMessage(payload);
+        setTimeout(() => ch.close(), 500);
+      }
     } catch {}
 
     try {
@@ -210,7 +235,7 @@ export function SettingsProvider({ children }) {
         theme: cleanTheme,
         language: cleanLang,
         fontSize: cleanFont,
-        from: TAB_ID,
+        from: tabId,
         ts: Date.now(),
       }));
     } catch {}
